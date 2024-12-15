@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mừng Sinh Nhật Người Yêu</title>
+    <!-- Liên kết tới file CSS bên ngoài -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Thêm thư viện canvas-confetti từ CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <!-- Nền ánh sáng nhấp nháy -->
+    <div class="background-lights"></div>
+    <!-- Nền trái tim bay lên -->
+    <div class="floating-hearts" id="floatingHearts"></div>
+
+    <h1>Chúc Mừng Sinh Nhật, Tường Vy!</h1>
+    <p>Chúc em có một ngày sinh nhật thật tuyệt vời, đầy ắp niềm vui và yêu thương!</p>
+    <div class="heart" id="heart">❤️</div>
+
+    <!-- Modal Structure -->
+    <div id="loveModal" class="modal">
+        <div class="modal-content">
+            <p>Em có thể làm người yêu anh không?</p>
+            <div class="modal-buttons">
+                <button class="btn-yes" id="btnYes">Đồng ý</button>
+                <button class="btn-no" id="btnNo">Không</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thank You Modal -->
+    <div id="thankYouModal" class="modal">
+        <div class="modal-content">
+            <p>Cảm ơn em đã đến bên anh! Từ giây phút này đây anh sẽ yêu em bằng tất cả những gì anh có ❤️</p>
+            <!-- Đồng hồ đếm thời gian -->
+            <div id="clock" class="clock">
+                <span id="days">0</span> ngày 
+                <span id="hours">00</span> giờ 
+                <span id="minutes">00</span> phút 
+                <span id="seconds">00</span> giây
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-close" id="btnClose">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Âm Thanh Nền -->
+    <audio id="backgroundMusic" src="https://www.bensound.com/bensound-music/bensound-love.mp3" preload="auto" loop></audio>
+
+    <script>
+        // Lấy các phần tử modal
+        const loveModal = document.getElementById('loveModal');
+        const thankYouModal = document.getElementById('thankYouModal');
+
+        // Lấy nút mở modal
+        const heart = document.getElementById('heart');
+
+        // Lấy các nút trong modal
+        const btnYes = document.getElementById('btnYes');
+        const btnNo = document.getElementById('btnNo');
+        const btnClose = document.getElementById('btnClose');
+
+        // Lấy âm thanh nền
+        const backgroundMusic = document.getElementById('backgroundMusic');
+
+        // Lấy phần tử chứa trái tim bay lên
+        const floatingHearts = document.getElementById('floatingHearts');
+
+        // Lấy đồng hồ đếm thời gian
+        const clock = document.getElementById('clock');
+
+        // Biến để quản lý đồng hồ đếm thời gian
+        let clockInterval;
+        let totalSeconds = 0;
+
+        // Biến trạng thái để biết người dùng đã đồng ý chưa
+        let hasAgreed = false;
+
+        // Hàm để khởi động đồng hồ đếm thời gian từ một thời điểm bắt đầu
+        function startClock(startTime) {
+            clock.style.display = "block"; // Hiển thị đồng hồ
+            updateClock(startTime); // Cập nhật ngay lập tức
+            clockInterval = setInterval(() => {
+                updateClock(startTime);
+            }, 1000);
+        }
+
+        // Hàm để cập nhật đồng hồ
+        function updateClock(startTime) {
+            const now = Date.now();
+            const elapsedSeconds = Math.floor((now - startTime) / 1000);
+            const days = Math.floor(elapsedSeconds / (3600 * 24));
+            const hours = Math.floor((elapsedSeconds % (3600 * 24)) / 3600);
+            const minutes = Math.floor((elapsedSeconds % 3600) / 60);
+            const seconds = elapsedSeconds % 60;
+
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+
+        // Hàm để dừng đồng hồ đếm thời gian
+        function stopClock() {
+            clearInterval(clockInterval);
+            clock.style.display = "none"; // Ẩn đồng hồ
+        }
+
+        // Kiểm tra trạng thái khi trang được tải
+        window.addEventListener('load', () => {
+            const agreedTime = localStorage.getItem('agreedTime');
+            if (agreedTime) {
+                hasAgreed = true;
+                thankYouModal.style.display = "block";
+                launchConfetti(); // Kích hoạt hiệu ứng pháo hoa
+                createMoreConfetti(); // Thêm pháo hoa nhiều hơn
+                startClock(parseInt(agreedTime));
+            }
+
+            // Cố gắng phát nhạc nền
+            backgroundMusic.play().then(() => {
+                console.log('Nhạc nền đang phát.');
+            }).catch(error => {
+                console.log('Autoplay bị chặn bởi trình duyệt.', error);
+            });
+        });
+
+        // Khi người dùng nhấn vào trái tim, mở modal yêu cầu hoặc thank you modal tùy vào trạng thái
+        heart.onclick = function() {
+            if (!hasAgreed) {
+                // Nếu chưa đồng ý, mở modal yêu cầu
+                loveModal.style.display = "block";
+                createFloatingHearts(); // Tạo trái tim bay lên nền
+
+                // Kiểm tra nếu nhạc chưa được phát, cố gắng phát nhạc
+                if (backgroundMusic.paused) {
+                    backgroundMusic.play().catch(error => {
+                        console.log('Không thể phát nhạc:', error);
+                    });
+                }
+            } else {
+                // Nếu đã đồng ý, mở thank you modal và hiển thị đồng hồ
+                thankYouModal.style.display = "block";
+                launchConfetti(); // Kích hoạt hiệu ứng pháo hoa
+                createMoreConfetti(); // Thêm pháo hoa nhiều hơn
+                const agreedTime = parseInt(localStorage.getItem('agreedTime'));
+                if (agreedTime) {
+                    startClock(agreedTime);
+                }
+            }
+        }
+
+        // Khi người dùng nhấn "Đồng ý"
+        btnYes.onclick = function() {
+            hasAgreed = true; // Đánh dấu đã đồng ý
+            loveModal.style.display = "none";
+            thankYouModal.style.display = "block";
+            launchConfetti(); // Kích hoạt hiệu ứng pháo hoa
+            createMoreConfetti(); // Thêm pháo hoa nhiều hơn
+            const agreedTime = Date.now();
+            localStorage.setItem('agreedTime', agreedTime);
+            startClock(agreedTime); // Bắt đầu đồng hồ đếm thời gian từ thời điểm đồng ý
+        }
+
+        // Khi người dùng nhấn "Không"
+        btnNo.onclick = function() {
+            loveModal.style.display = "none";
+            alert("Hãy suy nghĩ lại nhé! 😢");
+            loveModal.style.display = "block";
+        }
+
+        // Khi người dùng nhấn "Đóng" trong modal cảm ơn
+        btnClose.onclick = function() {
+            thankYouModal.style.display = "none";
+            stopClock(); // Dừng đồng hồ đếm thời gian
+        }
+
+        // Khi người dùng nhấn ngoài modal, đóng modal
+        window.onclick = function(event) {
+            if (event.target == loveModal) {
+                loveModal.style.display = "none";
+            }
+            if (event.target == thankYouModal) {
+                thankYouModal.style.display = "none";
+                stopClock(); // Dừng đồng hồ nếu đóng bằng cách nhấn ngoài
+            }
+        }
+
+        // Hàm để kích hoạt hiệu ứng pháo hoa
+        function launchConfetti() {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#FF69B4', '#FFB6C1', '#FFC0CB', '#FF1493']
+            });
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#4682B4', '#5A9BD5', '#6495ED', '#1E90FF']
+            });
+        }
+
+        // Hàm để tạo thêm pháo hoa
+        function createMoreConfetti() {
+            setInterval(() => {
+                confetti({
+                    particleCount: 100,
+                    spread: 60,
+                    origin: { y: 0.6 },
+                    colors: ['#FF69B4', '#FFB6C1', '#FFC0CB', '#FF1493']
+                });
+            }, 1000);
+        }
+
+        // Hàm để tạo trái tim bay lên nền
+        function createFloatingHearts() {
+            const heartCount = 20;
+            for(let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = 5 + Math.random() * 5 + 's';
+                heart.style.fontSize = (10 + Math.random() * 20) + 'px';
+                heart.innerHTML = '❤️';
+                floatingHearts.appendChild(heart);
+            }
+        }
+    </script>
+</body>
+</html>

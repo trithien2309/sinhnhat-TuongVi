@@ -1,0 +1,194 @@
+/* Reset CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Cài đặt font chữ và nền */
+body {
+    font-family: 'Open Sans', sans-serif;
+    background: linear-gradient(to right, #a55468, #62c5dd); /* Gradient hồng và xanh trời */
+    color: #1f1217;
+    padding: 100px;
+    text-align: center;
+    overflow: hidden; /* Ẩn thanh cuộn khi có hiệu ứng */}
+
+/* Tiêu đề */
+h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Đoạn văn */
+p {
+    font-size: 1.5em;
+    margin-bottom: 40px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Trái tim */
+.heart {
+    font-size: 5em;
+    color: #FF69B4; /* Đổi màu trái tim thành hồng sáng để tương phản với nền */
+    cursor: pointer;
+    animation: heart-beat 1.5s infinite;
+    transition: transform 0.2s;
+}
+.heart:hover {
+    transform: scale(1.2);
+}
+@keyframes heart-beat {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.1); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Modal Styles */
+.modal {
+    display: none; /* Ẩn mặc định */
+    position: fixed; /* Giữ ở vị trí cố định */
+    z-index: 1000; /* Đảm bảo modal nằm trên cùng */
+    left: 0;
+    top: 0;
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+    height: 100%; /* Chiếm toàn bộ chiều cao */
+    overflow: hidden; /* Ẩn thanh cuộn */
+    background-color: rgba(0,0,0,0.6); /* Nền mờ */
+    animation: fadeIn 0.5s;
+}
+.modal-content {
+    background-color: #fff;
+    color: #df1182; /* Đổi màu văn bản trong modal */
+    margin: 10% auto; /* 10% từ trên và canh giữa */
+    padding: 45px;
+    border: 5px solid #4682B4;
+    width: 90%; /* Chiều rộng hợp lý */
+    max-width: 500px;
+    border-radius: 15px;
+    text-align: center;
+    position: relative;
+    animation: slideIn 0.5s ease-out;
+}
+.modal-content p {
+    font-size: 1.5em;
+    margin-bottom: 30px;
+}
+
+/* Các nút trong modal */
+.modal-buttons button {
+    padding: 15px 30px;
+    margin: 0 15px;
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    border-radius: 25px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+.btn-yes {
+    background-color: #4682B4;
+    color: #fff;
+}
+.btn-yes:hover {
+    background-color: #5A9BD5;
+    transform: scale(1.05);
+}
+.btn-no {
+    background-color: #ccc;
+    color: #000;
+}
+.btn-no:hover {
+    background-color: #b3b3b3;
+    transform: scale(1.05);
+}
+.btn-close {
+    background-color: #4caf50;
+    color: #fff;
+}
+.btn-close:hover {
+    background-color: #43a047;
+    transform: scale(1.05);
+}
+
+/* Hiệu ứng thêm cho Modal Cảm Ơn */
+#thankYouModal .modal-content {
+    animation: fadeInScale 1s forwards;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Đồng hồ đếm thời gian */
+.clock {
+    font-size: 2em;
+    margin-top: 20px;
+    color: #4682B4; /* Màu xanh dương giống với văn bản trong modal */
+    font-weight: bold;
+}
+.clock span {
+    display: inline-block;
+    min-width: 30px;
+}
+
+/* Nền trái tim bay lên */
+.floating-hearts {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+.floating-hearts .heart {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: url('https://i.imgur.com/Qp3bqQH.png') no-repeat center center;
+    background-size: contain;
+    animation: floatUp 5s linear infinite;
+    opacity: 0.7;
+}
+@keyframes floatUp {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-10vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Nền ánh sáng nhấp nháy */
+.background-lights {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: lightMove 10s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+@keyframes lightMove {
+    from { background-position: 0 0; }
+    to { background-position: 100px 100px; }
+}
